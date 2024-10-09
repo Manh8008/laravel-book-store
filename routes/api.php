@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\API\User\ChangePasswordController;
 
 
 /*
@@ -29,6 +30,7 @@ Route::group([
     //profile 
     Route::get("profile", [ProfileController::class, "profile"]);
     Route::get("logout", [LogoutController::class, "logout"]);
+    Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
