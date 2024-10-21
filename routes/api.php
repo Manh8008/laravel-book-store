@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\User\ChangePasswordController;
 
 
@@ -20,10 +21,11 @@ use App\Http\Controllers\API\User\ChangePasswordController;
 |
 */
 
-
-
 Route::post("register", [RegisterController::class, "register"]);
 Route::post("login", [LoginController::class, "login"]);
+Route::post("forgot-password", [ForgotPasswordController::class, "forgotPassword"])->name('password.reset');
+Route::post("reset-password", [ForgotPasswordController::class, "resetPassword"]);
+
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function(){
