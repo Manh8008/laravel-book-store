@@ -49,7 +49,7 @@ class User extends Authenticatable
     ];
 
     // Mối quan hệ với Address (User có nhiều địa chỉ)
-    public function addresses()
+    public function address()
     {
         return $this->hasMany(Addresses::class, 'user_id');
     }

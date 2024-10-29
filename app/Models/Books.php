@@ -9,17 +9,33 @@ class Books extends Model
 {
     use HasFactory;
     protected $table = "books";
+    protected $fillable = [
+        'name',
+        'title',
+        'description',
+        'price',
+        'stock',
+        'category_id',
+        'author_id',
+        'weight',
+        'size',
+        'pages',
+        'language',
+        'format',
+        'short_summary',
+        'publisher'
+    ];
 
     // Mỗi sách thuộc 1 danh mục
     public function category()
     {
-        return $this->belongsTo(Categories::class, 'category_id');
+        return $this->belongsTo(Categories::class);
     }
 
     // 1 sách 1 tác giả . 
     public function author()
     {
-        return $this->belongsTo(Authors::class, 'author_id');
+        return $this->belongsTo(Authors::class);
     }
 
     // 1 sách có nhiều hình ảnh
@@ -27,6 +43,7 @@ class Books extends Model
     {
         return $this->hasMany(Images::class, 'book_id');
     }
+    
 
     public function reviews()
     {
@@ -37,7 +54,7 @@ class Books extends Model
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class, 'book_id');
-    }
+    }   
 
     // mỗi sách có nhiều trong giỏ hàng
     public function shoppingCarts()

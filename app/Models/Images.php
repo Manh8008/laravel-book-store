@@ -9,11 +9,14 @@ class Images extends Model
 {
     use HasFactory;
     protected $table = 'images';
-
+    protected $fillable = [
+        'book_id',
+        'url',
+    ];
     // Each image belongs to one book
     public function books()
     {
-        return $this->belongsTo(Books::class, 'book_id');
+        return $this->belongsTo(Books::class);
     }
 }
 

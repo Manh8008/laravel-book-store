@@ -10,11 +10,13 @@ class Categories extends Model
     use HasFactory;
     // protected $filltable = [''];
     protected $table = 'categories';
-
-    // Each category can have many books
+    protected $fillable = [
+        'name',
+        'url',
+    ];
     public function books()
     {
-        return $this->hasMany(Books::class, 'category_id');
+        return $this->hasMany(Books::class);
     }
 }
 

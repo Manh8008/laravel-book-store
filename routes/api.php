@@ -8,6 +8,9 @@ use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\API\User\ChangePasswordController;
+use App\Http\Controllers\API\User\BookController;
+use App\Http\Controllers\API\User\CategoryController;
+use App\Http\Controllers\API\User\LocationController;
 
 
 /*
@@ -34,6 +37,21 @@ Route::group([
     Route::get("logout", [LogoutController::class, "logout"]);
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
 });
+
+Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
+Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
+Route::get('/getAllCategories', [CategoryController::class, 'index']);
+Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
+Route::get('/books/search', [BookController::class, 'search']);
+
+// Loacation
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/address/store', [LocationController::class, 'store']);
+    Route::put('/address/update/{id}', [LocationController::class, 'update']);
+    Route::delete('/address/destroy/{id}', [LocationController::class, 'destroy']);
+});
+
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

@@ -19,7 +19,9 @@ class ProfileController extends Controller
             {
                 return HttpResponse::respondError('Người dùng chưa đăng nhập');
             }
-            return HttpResponse::respondWithSuccess($userData,'Thông tin người dùng được lấy thành công');
+
+            $address = $userData->address;
+            return HttpResponse::respondWithSuccess([$userData,$address],'Thông tin người dùng được lấy thành công');
         } catch (\Throwable $th) {
             Return HttpResponse::respondUnAuthenticated();
         }

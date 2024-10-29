@@ -9,12 +9,17 @@ class Addresses extends Model
 {
     use HasFactory;
     protected $table = 'addresses';
+    protected $fillable = [
+        'address_line',
+        'phone',
+        'name',
+        'user_id',
+    ];
 
     // Each address belongs to one customer
-    public function customer()
+    public function user()
     {
-        return $this->belongsTo(Users::class, 'user_id');
-        
+        return $this->belongsTo(Users::class,'user_id');
     }
 
     // Each address can be associated with many orders

@@ -13,6 +13,6 @@ class BookDetail extends Model
     // Thiết lập mối quan hệ với model Book
     public function book()
     {
-        return $this->belongsTo(Book::class, 'book_id');
+        return $this->belongsTo(Book::class);
     }
 }
