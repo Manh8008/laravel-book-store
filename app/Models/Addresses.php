@@ -14,6 +14,9 @@ class Addresses extends Model
         'phone',
         'name',
         'user_id',
+        'town',
+        'district',
+        'province',
     ];
 
     // Each address belongs to one customer

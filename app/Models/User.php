@@ -48,6 +48,12 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    // Lấy địa chỉ mặc định
+    public function defaultAddress()
+    {
+        return $this->hasOne(Addresses::class)->where('default', true);
+    }
+
     // Mối quan hệ với Address (User có nhiều địa chỉ)
     public function address()
     {
