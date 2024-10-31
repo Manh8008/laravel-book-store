@@ -43,12 +43,11 @@ class Books extends Model
     {
         return $this->hasMany(Images::class, 'book_id');
     }
-    
 
-    public function reviews()
-    {
-        return $this->hasMany(Reviews::class, 'book_id');
-    }
+    // public function reviews()
+    // {
+    //     return $this->hasMany(Reviews::class, 'book_id');
+    // }
 
     // Each book can be in many order details (many-to-many through order details)
     public function orderDetails()
@@ -57,15 +56,15 @@ class Books extends Model
     }   
 
     // mỗi sách có nhiều trong giỏ hàng
-    public function shoppingCarts()
-    {
-        return $this->hasMany(ShoppingCart::class, 'book_id');
-    }
+    // public function shoppingCarts()
+    // {
+    //     return $this->hasMany(ShoppingCart::class, 'book_id');
+    // }
 
-    public function details()
-    {
-        return $this->hasMany(BookDetail::Class, 'book_id');
-    }
+    // public function details()
+    // {
+    //     return $this->hasMany(BookDetail::Class, 'book_id');
+    // }
 }
 
 

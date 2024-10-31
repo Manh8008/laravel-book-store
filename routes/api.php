@@ -11,6 +11,7 @@ use App\Http\Controllers\API\User\ChangePasswordController;
 use App\Http\Controllers\API\User\BookController;
 use App\Http\Controllers\API\User\CategoryController;
 use App\Http\Controllers\API\User\LocationController;
+use App\Http\Controllers\API\Admin\BookAdminController;
 
 
 /*
@@ -28,7 +29,6 @@ Route::post("register", [RegisterController::class, "register"]);
 Route::post("login", [LoginController::class, "login"]);
 Route::post("forgot-password", [ForgotPasswordController::class, "forgotPassword"])->name('password.reset');
 Route::post("reset-password", [ForgotPasswordController::class, "resetPassword"]);
-
 Route::group([
     "middleware" => ["auth:sanctum"]
 ], function(){
@@ -36,21 +36,24 @@ Route::group([
     Route::get("profile", [ProfileController::class, "profile"]);
     Route::get("logout", [LogoutController::class, "logout"]);
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
+
+    // Productphp
+    Route::post("admin/storeProduct", [BookAdminController::class, "store"]);
+
 });
+
 
 Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
 Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
 Route::get('/getAllCategories', [CategoryController::class, 'index']);
 Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
 Route::get('/books/search', [BookController::class, 'search']);
-
 // Loacation
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/address/store', [LocationController::class, 'store']);
     Route::put('/address/update/{id}', [LocationController::class, 'update']);
     Route::delete('/address/destroy/{id}', [LocationController::class, 'destroy']);
 });
-
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
