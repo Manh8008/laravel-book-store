@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('addresses', function (Blueprint $table) {
-            $table->boolean('default'); 
+        Schema::table('orders', function (Blueprint $table) {
+            $table->string('order_code')->unique()->nullable()->after('order_date');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('addresses', function (Blueprint $table) {
-            $table->dropColumn('default');
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn('order_code');
         });
     }
 };

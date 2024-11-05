@@ -9,6 +9,10 @@ class Payments extends Model
 {
     use HasFactory;
     protected $table = 'payments';
+    protected $fillable = [
+        'payment_method', 
+        'payment_status',
+    ];
 
     public function orders()
     {

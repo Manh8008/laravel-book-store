@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Library\HttpResponse;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class BookAdminController extends Controller
 {
@@ -37,14 +38,6 @@ class BookAdminController extends Controller
             // 'images' => 'required|array',
             'images.*' => 'required|file|mimes:jpeg,png,jpg,gif',
         ]);
-
-        // Kiểm tra nếu dữ liệu không hợp lệ
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'errors' => 'lỗi'
-        //     ], 422);
-        // }
-        // $validated = $validator->validated();
         DB::beginTransaction();
         try {
             $author = Authors::create([
@@ -67,79 +60,26 @@ class BookAdminController extends Controller
                 'short_summary' => $request->short_summary ?? null,
                 'publisher' => $request->publisher ?? null,
             ]);
-            // foreach ($request->images as $imageData) {
-            //     $imageName = Str::random(32).'.'.$request->images->getClientOriginalExtension();
-            //     Storage::disk('public')->put($imageName,file_get_contents($request->images));
-            //     Images::create([
-            //         'book_id' => $book->id, 
-            //         'url' => $imageName,
-            //     ]);
-            // // }
-            // if (isset($request->images) && is_array($request->images)) {
-            //     foreach ($request->images as $imageData) {
-            //         if ($imageData instanceof \Illuminate\Http\UploadedFile) {
-            //             $imageName = Str::random(32) . '.' . $imageData->getClientOriginalExtension();
-            //             Storage::disk('public')->put($imageName, file_get_contents($imageData->getRealPath()));
-            //             Images::create([
-            //                 'book_id' => $book->id,
-            //                 'url' => $imageName,
-            //             ]);
-            //         } else {
-            //             // Nếu imageData là một URL
-            //             $imageName = Str::random(32) . '.' . pathinfo($imageData, PATHINFO_EXTENSION);
-            //             Storage::disk('public')->put($imageName, file_get_contents($imageData));
-            //             Images::create([
-            //                 'book_id' => $book->id,
-            //                 'url' => $imageName,
-            //             ]);
-            //         }
-            //     }
-            // }
-            if ($request->images instanceof \Illuminate\Http\UploadedFile) {
-            $imageName = Str::random(32) . '.' . $request->images->getClientOriginalExtension();
-            Storage::disk('public')->put($imageName, file_get_contents($request->images->getRealPath()));
-            
-                
-            $imageUrl = Storage::url($imageName);
-            $url = url($imageUrl);
-            Images::create([
-                'book_id' => $book->id,
-                'url' => $url, 
-            ]);
-            } else {
-                $imageName = Str::random(32) . '.' . pathinfo($request->images, PATHINFO_EXTENSION);
-                Storage::disk('public')->put($imageName, file_get_contents($request->images));
-                
-                
-                $imageUrl = Storage::url($imageName);
-                
-                Images::create([
-                    'book_id' => $book->id,
-                    'url' => $imageUrl, 
-                ]);
-        }
-            // if (isset($request->images) && is_array($request->images)) {
-            //     foreach ($request->images as $imageData) {
-            //         if (is_string($imageData)) {
-            //             $imageName = Str::random(32) . '.' . pathinfo($imageData, PATHINFO_EXTENSION);
-            //             Storage::disk('public')->put($imageName, file_get_contents($imageData));
-            //             Images::create([
-            //                 'book_id' => $book->id,
-            //                 'url' => $imageName,
-            //             ]);
-            //         }
-            //     }
-            // }
-            // foreach ($request->images as $imageData) {
-            //     Images::create([
-            //         'book_id' => $book->id, 
-            //         'url' => $imageData,
-            //     ]);
-            // }
-            // Images::create([
-            //         'book_id' => $book->id, 
-            //         'url' => $request->images,
-            //     ]);
+            if ($request->images instanceof \Illuminate\Http\UploadedFile) 
+                {
+                    $imageName = Str::random(32) . '.' . $request->images->getClientOriginalExtension();
+                    Storage::disk('public')->put($imageName, file_get_contents($request->images->getRealPath()));
+                    $imageUrl = Storage::url($imageName);
+                    $url = url($imageUrl);
+                    Images::create([
+                        'book_id' => $book->id,
+                        'url' => $url, 
+                    ]);
+                } else 
+                {
+                    $imageName = Str::random(32) . '.' . pathinfo($request->images, PATHINFO_EXTENSION);
+                    Storage::disk('public')->put($imageName, file_get_contents($request->images));
+                    $imageUrl = Storage::url($imageName);
+                    Images::create([
+                        'book_id' => $book->id,
+                        'url' => $imageUrl, 
+                    ]);
+                }
             DB::commit();
             return response()->json($book->load('author', 'category', 'images'), 201);
         } catch (\Exception $e) {
@@ -147,6 +87,109 @@ class BookAdminController extends Controller
             return response()->json(['message' => 'Failed to create book: ' . $e->getMessage()], 500);
         }
     }
-    
-    
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $book = Books::find($id);
+            if (!$book) {
+                return response()->json(['message' => 'Book not found'], 404);
+            }
+            // Validate request data
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric',
+                'stock' => 'required|integer',
+                'weight' => 'nullable|numeric',
+                'size' => 'nullable|string',
+                'pages' => 'nullable|integer',
+                'language' => 'nullable|string',
+                'format' => 'nullable|string',
+                'short_summary' => 'nullable|string',
+                'publisher' => 'nullable|string',
+                'category_id' => 'required|integer',
+                'authorName' => 'required|string|max:255',
+                'authorBio' => 'nullable|string',
+                'images.*' => 'file|mimes:jpeg,png,jpg,gif',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+            DB::beginTransaction();
+            $book->update([
+                'name' => $request->name,
+                'title' => $request->title,
+                'description' => $request->description,
+                'price' => $request->price,
+                'stock' => $request->stock,
+                'category_id' => $request->category_id,
+                'weight' => $request->weight,
+                'size' => $request->size,
+                'pages' => $request->pages,
+                'language' => $request->language,
+                'format' => $request->format,
+                'short_summary' => $request->short_summary,
+                'publisher' => $request->publisher,
+            ]);
+            $author = $book->author;
+            if ($author) {
+                $author->update([
+                    'name' => $request->authorName,
+                    'bio' => $request->authorBio,
+                ]);
+            }
+            $storage = Storage::disk('public'); // Khởi tạo storage
+            // Xóa hình ảnh cũ (nếu có)
+            $book->images()->delete();
+            
+            if ($request->images instanceof \Illuminate\Http\UploadedFile) 
+                {
+                    $imageName = Str::random(32) . '.' . $request->images->getClientOriginalExtension();
+                    Storage::disk('public')->put($imageName, file_get_contents($request->images->getRealPath()));
+                    $imageUrl = Storage::url($imageName);
+                    $url = url($imageUrl);
+                    Images::create([
+                        'book_id' => $book->id,
+                        'url' => $url, 
+                    ]);
+                } else 
+                {
+                    $imageName = Str::random(32) . '.' . pathinfo($request->images, PATHINFO_EXTENSION);
+                    Storage::disk('public')->put($imageName, file_get_contents($request->images));
+                    $imageUrl = Storage::url($imageName);
+                    $url = url($imageUrl);
+                    Images::create([
+                        'book_id' => $book->id,
+                        'url' => $url, 
+                    ]);
+                }
+            DB::commit();
+            return response()->json($book->load('author', 'category', 'images'), 200);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to update book: ' . $e->getMessage()], 500);
+        }
+    }   
+
+    public function destroy($id)
+    {
+        try {
+            $book = Books::find($id);
+            if (!$book) {
+                return response()->json(['message' => 'Book not found'], 404);
+            }
+            $book->images()->delete(); 
+            if ($book->author) {
+                $author = $book->author;
+                $author->delete(); 
+            }
+            $book->delete();
+            return response()->json(['message' => 'Book and related author deleted successfully'], 200);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Failed to delete book: ' . $e->getMessage()], 500);
+        }
+    }
+
 }

@@ -12,7 +12,7 @@ class Categories extends Model
     protected $table = 'categories';
     protected $fillable = [
         'name',
-        'url',
+        'image',
     ];
     public function books()
     {

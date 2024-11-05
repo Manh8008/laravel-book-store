@@ -8,6 +8,7 @@ use App\Models\Addresses;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Library\HttpResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
@@ -40,7 +41,6 @@ class LocationController extends Controller
         ]);
         return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được tạo thành công');
     }
-
 
     public function update(Request $request, $id)
     {
@@ -94,20 +94,36 @@ class LocationController extends Controller
         if (!$user) {
             return HttpResponse::respondError('Bạn chưa đăng nhập');
         }
+
         $address = Addresses::find($id);
-        if (!$address || $address->id_user !== $user->id) {
+        if (!$address || $address->user_id !== $user->id) {
             return HttpResponse::respondError('Địa chỉ không tồn tại hoặc không thuộc về bạn');
         }
-        $currentDefault = $address->default;
-        if ($currentDefault) {
+
+        // Kiểm tra xem địa chỉ này có phải là mặc định không
+        if ($address->default) {
+            // Nếu địa chỉ đã là mặc định, thì bỏ mặc định cho địa chỉ
+            dd($address->default);
             $address->update(['default' => false]);
-            return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã cật nhật thành công');
+            return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã cập nhật thành công và không còn là mặc định');
         } else {
-            $user->addresses()->update(['default' => false]);
+            $user->address()->update(['default' => false]);
             $address->update(['default' => true]);
-            return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã cật nhật thành công');
+            
+            return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã cập nhật thành công và trở thành mặc định');
         }
     }
 
-
+    public function getAllAddressesById($userId)
+    {
+        try {
+            $addresses = Addresses::where('user_id', $userId)->get();
+            if ($addresses->isEmpty()) {
+                return HttpResponse::respondError('Chưa cật nhật địa chỉ');
+            }
+            return HttpResponse::respondWithSuccess($addresses);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Failed to retrieve addresses: ' . $e->getMessage()], 500);
+        }
+    }
 }
