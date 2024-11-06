@@ -12,7 +12,7 @@ class Orders extends Model
     protected $fillable = [
         'user_id', 'address_id', 'payment_id', 'order_date', 'order_price', 
         'order_code', 'total_amount', 'payment_status', 'order_status', 
-        'address_line', 'city', 'phone', 'name'
+        'address_line', 'city', 'phone', 'name','town','district','province'
     ];
 
 

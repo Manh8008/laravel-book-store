@@ -51,8 +51,10 @@ Route::group([
 
     // Order
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
+    Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
+    Route::post("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
 
-});
+});  
 
 Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
 Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
