@@ -14,6 +14,7 @@ use App\Http\Controllers\API\User\LocationController;
 use App\Http\Controllers\API\User\CheckOutController;
 use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
+use App\Http\Controllers\API\Admin\OrderAdminController;
 
 
 /*
@@ -52,9 +53,8 @@ Route::group([
     // Order
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
-    Route::post("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
-
 });  
+    Route::get("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
 
 Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
 Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
@@ -70,6 +70,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/address/defaultUpdate/{id}', [LocationController::class, 'defaultUpdate']);
     Route::get('getAddressByUserId/{id}', [LocationController::class, 'getAllAddressesById']);
 });
+
+
+// Orderadmin
+    Route::get('/search-orders', [OrderAdminController::class, 'searchOrders']);
+    Route::get('/pending-orders', [OrderAdminController::class, 'getAllPendingOrders']);
+
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

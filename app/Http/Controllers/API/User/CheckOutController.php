@@ -183,16 +183,17 @@ class CheckOutController extends Controller
 
     public function vnpayReturn(Request $request)
     {
-        $vnp_HashSecret = env('VNP_HASH_SECRET'); 
-        $inputData = $request->all();
-        $vnp_SecureHash = $inputData['vnp_SecureHash'] ?? '';
-        unset($inputData['vnp_SecureHash']);
-        ksort($inputData);
-        $hashData = urldecode(http_build_query($inputData));
-        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-        if ($secureHash === $vnp_SecureHash) {
-            if ($request->vnp_TransactionStatus == 00) {
-                $orderCode = $inputData['vnp_TxnRef'];
+        // $vnp_HashSecret = env('VNP_HASH_SECRET'); 
+        // $inputData = $request->all();
+        // $vnp_SecureHash = $inputData['vnp_SecureHash'] ?? '';
+        // unset($inputData['vnp_SecureHash']);
+        // ksort($inputData);
+        // $hashData = urldecode(http_build_query($inputData));
+        // $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
+        // dd($secureHash,$vnp_SecureHash);
+        // if ($secureHash === $vnp_SecureHash) {
+            if ($request->vnp_TransactionStatus == '00') {
+                $orderCode = $request['vnp_TxnRef'];
                 $order = Orders::where('order_code', $orderCode)->first();
                 if ($order) {
                     $order->payment_status = 'Đã thanh toán';
@@ -210,9 +211,9 @@ class CheckOutController extends Controller
             } else {
                 return HttpResponse::respondError('Thanh toán thất bại. Vui lòng thử lại.');
             }
-        } else {
-            return HttpResponse::respondError('Dữ liệu không hợp lệ.');
-        }
+        // } else {
+        //     return HttpResponse::respondError('Dữ liệu không hợp lệ.');
+        // }
     }
     
     public function cancelOrder(Request $request, $orderCode)
