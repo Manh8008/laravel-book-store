@@ -32,7 +32,7 @@ class LocationController extends Controller
         }
         $address = Addresses::create([
             'address_line' => $request->address_line,
-            'name' => $request->city,
+            'name' => $request->name,
             'phone' => $request->phone,
             'town' => $request->town,
             'district' => $request->district,
