@@ -21,7 +21,7 @@ class LocationController extends Controller
         // Xác thực dữ liệu đầu vào
         $validator = Validator::make($request->all(), [
             'address_line' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'phone' => 'nullable|string|max:15',
             'town' => 'required|string|max:100',
             'district' => 'required|string|max:100',
@@ -32,7 +32,7 @@ class LocationController extends Controller
         }
         $address = Addresses::create([
             'address_line' => $request->address_line,
-            'city' => $request->city,
+            'name' => $request->city,
             'phone' => $request->phone,
             'town' => $request->town,
             'district' => $request->district,
@@ -57,7 +57,7 @@ class LocationController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'address_line' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'phone' => 'nullable|string|max:15',
             'town' => 'required|string|max:100',
             'district' => 'required|string|max:100',
@@ -68,7 +68,7 @@ class LocationController extends Controller
         }
         $address->update([
             'address_line' => $request->address_line,
-            'city' => $request->city,
+            'name' => $request->name,
             'phone' => $request->phone,
             'town' => $request->town,
             'district' => $request->district,
