@@ -30,6 +30,10 @@ class LocationController extends Controller
         if ($validator->fails()) {
             return HttpResponse::respondError($validator->errors());
         }
+        Addresses::where('user_id', $user->id)
+        ->where('default', true)
+        ->update(['default' => false]);
+
         $address = Addresses::create([
             'address_line' => $request->address_line,
             'name' => $request->name,
@@ -38,6 +42,7 @@ class LocationController extends Controller
             'district' => $request->district,
             'province' => $request->province,
             'user_id' => $user->id,
+            'default' => true, 
         ]);
         return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được tạo thành công');
     }
@@ -94,12 +99,10 @@ class LocationController extends Controller
         if (!$user) {
             return HttpResponse::respondError('Bạn chưa đăng nhập');
         }
-
         $address = Addresses::find($id);
         if (!$address || $address->user_id !== $user->id) {
             return HttpResponse::respondError('Địa chỉ không tồn tại hoặc không thuộc về bạn');
         }
-
         // Kiểm tra xem địa chỉ này có phải là mặc định không
         if ($address->default) {
             // Nếu địa chỉ đã là mặc định, thì bỏ mặc định cho địa chỉ
