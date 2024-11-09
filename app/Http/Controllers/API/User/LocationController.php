@@ -18,7 +18,6 @@ class LocationController extends Controller
         if (!$user) {
             return HttpResponse::respondError('Bạn chưa đăng nhập');
         }
-        // Xác thực dữ liệu đầu vào
         $validator = Validator::make($request->all(), [
             'address_line' => 'required|string|max:255',
             'name' => 'required|string|max:100',
@@ -26,14 +25,17 @@ class LocationController extends Controller
             'town' => 'required|string|max:100',
             'district' => 'required|string|max:100',
             'province' => 'required|string|max:100',
+            'default' => 'nullable|boolean',
         ]);
         if ($validator->fails()) {
             return HttpResponse::respondError($validator->errors());
         }
-        Addresses::where('user_id', $user->id)
-        ->where('default', true)
-        ->update(['default' => false]);
-
+        if($request->default == 1)
+        {
+            Addresses::where('user_id', $user->id)
+            ->where('default', true)
+            ->update(['default' => false]);
+        }
         $address = Addresses::create([
             'address_line' => $request->address_line,
             'name' => $request->name,
@@ -42,7 +44,7 @@ class LocationController extends Controller
             'district' => $request->district,
             'province' => $request->province,
             'user_id' => $user->id,
-            'default' => true, 
+            'default' => $request->default
         ]);
         return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được tạo thành công');
     }
@@ -117,16 +119,16 @@ class LocationController extends Controller
         }
     }
 
-    public function getAllAddressesById($userId)
-    {
-        try {
-            $addresses = Addresses::where('user_id', $userId)->get();
-            if ($addresses->isEmpty()) {
-                return HttpResponse::respondError('Chưa cật nhật địa chỉ');
-            }
-            return HttpResponse::respondWithSuccess($addresses);
-        } catch (\Throwable $e) {
-            return response()->json(['message' => 'Failed to retrieve addresses: ' . $e->getMessage()], 500);
-        }
-    }
+    // public function getAllAddressesById($userId)
+    // {
+    //     try {
+    //         $addresses = Addresses::where('user_id', $userId)->get();
+    //         if ($addresses->isEmpty()) {
+    //             return HttpResponse::respondError('Chưa cật nhật địa chỉ');
+    //         }
+    //         return HttpResponse::respondWithSuccess($addresses);
+    //     } catch (\Throwable $e) {
+    //         return response()->json(['message' => 'Failed to retrieve addresses: ' . $e->getMessage()], 500);
+    //     }
+    // }
 }
