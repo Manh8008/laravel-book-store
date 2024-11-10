@@ -69,6 +69,7 @@ class LocationController extends Controller
             'town' => 'required|string|max:100',
             'district' => 'required|string|max:100',
             'province' => 'required|string|max:100',
+            'default' => 'nullable|boolean',
         ]);
         if ($validator->fails()) {
             return HttpResponse::respondError($validator->errors());
@@ -80,6 +81,7 @@ class LocationController extends Controller
             'town' => $request->town,
             'district' => $request->district,
             'province' => $request->province,
+            'default' => $request->default,
         ]);
         return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được cập nhật thành công');
     }   
@@ -114,7 +116,6 @@ class LocationController extends Controller
         } else {
             $user->address()->update(['default' => false]);
             $address->update(['default' => true]);
-            
             return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã cập nhật thành công và trở thành mặc định');
         }
     }
