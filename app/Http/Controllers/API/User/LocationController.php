@@ -74,6 +74,12 @@ class LocationController extends Controller
         if ($validator->fails()) {
             return HttpResponse::respondError($validator->errors());
         }
+        if($request->default == 1)
+        {
+            Addresses::where('user_id', $user->id)
+            ->where('default', true)
+            ->update(['default' => false]);
+        }
         $address->update([
             'address_line' => $request->address_line,
             'name' => $request->name,
@@ -120,16 +126,16 @@ class LocationController extends Controller
         }
     }
 
-    // public function getAllAddressesById($userId)
-    // {
-    //     try {
-    //         $addresses = Addresses::where('user_id', $userId)->get();
-    //         if ($addresses->isEmpty()) {
-    //             return HttpResponse::respondError('Chưa cật nhật địa chỉ');
-    //         }
-    //         return HttpResponse::respondWithSuccess($addresses);
-    //     } catch (\Throwable $e) {
-    //         return response()->json(['message' => 'Failed to retrieve addresses: ' . $e->getMessage()], 500);
-    //     }
-    // }
+    public function getAddressesById($id)
+    {
+        try {
+            $address = Addresses::find($id); 
+            if (!$address) {
+                return HttpResponse::respondError('Không tìm thấy địa chỉ');
+            }
+            return HttpResponse::respondWithSuccess($address);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => 'Failed to retrieve address: ' . $e->getMessage()], 500);
+        }
+    }
 }

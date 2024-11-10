@@ -68,7 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/address/update/{id}', [LocationController::class, 'update']);
     Route::delete('/address/destroy/{id}', [LocationController::class, 'destroy']);
     Route::put('/address/defaultUpdate/{id}', [LocationController::class, 'defaultUpdate']);
-    Route::get('getAddressByUserId/{id}', [LocationController::class, 'getAllAddressesById']);
+    Route::get('getAddressesById/{id}', [LocationController::class, 'getAddressesById']);
 });
 
 
