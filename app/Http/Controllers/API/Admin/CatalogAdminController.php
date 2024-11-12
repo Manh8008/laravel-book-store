@@ -8,11 +8,14 @@ use App\Models\Categories;
 use App\Http\Library\HttpResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 class CatalogAdminController extends Controller
 {
     public function store(Request $request)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         $request->validate([
             'name' => 'required|string',
             'image' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048|unique:categories,image',
@@ -36,6 +39,7 @@ class CatalogAdminController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         $category = Categories::findOrFail($id);
         $request->validate([
             'name' => 'required|string|max:255',
@@ -76,6 +80,7 @@ class CatalogAdminController extends Controller
 
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         $category = Categories::findOrFail($id);
         $category->delete();
         return response()->json(['message' => 'Category deleted']);

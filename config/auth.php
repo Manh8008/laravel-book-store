@@ -64,6 +64,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        
+        'staff' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Staff::class,  // Đảm bảo model `Staff` đã kế thừa `Authenticatable`
+        ],
 
         // 'users' => [
         //     'driver' => 'database',

@@ -18,6 +18,7 @@ class BookAdminController extends Controller
 {
     public function store(Request $request)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'title' => 'required|string|max:255',
@@ -81,7 +82,8 @@ class BookAdminController extends Controller
                     ]);
                 }
             DB::commit();
-            return response()->json($book->load('author', 'category', 'images'), 201);
+            // return response()->json($book->load('author', 'category', 'images'), 201);
+            return HttpResponse::respondWithSuccess($book->load('author', 'category', 'images'),"Thêm sách thành công ");
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Failed to create book: ' . $e->getMessage()], 500);
@@ -90,10 +92,12 @@ class BookAdminController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         try {
             $book = Books::find($id);
             if (!$book) {
-                return response()->json(['message' => 'Book not found'], 404);
+                // return response()->json(['message' => 'Book not found'], 404);
+                return HttpResponse::respondError('Book not found');
             }
             // Validate request data
             $validator = Validator::make($request->all(), [
@@ -115,7 +119,8 @@ class BookAdminController extends Controller
                 'images.*' => 'file|mimes:jpeg,png,jpg,gif',
             ]);
             if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
+                // return response()->json(['errors' => $validator->errors()], 422);
+                return HttpResponse::respondError($validator->errors());
             }
             DB::beginTransaction();
             $book->update([
@@ -166,7 +171,8 @@ class BookAdminController extends Controller
                     ]);
                 }
             DB::commit();
-            return response()->json($book->load('author', 'category', 'images'), 200);
+            // return response()->json($book->load('author', 'category', 'images'), 200);
+            return HttpResponse::respondWithSuccess($book->load('author', 'category', 'images'),"Update thành công ");
         } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['message' => 'Failed to update book: ' . $e->getMessage()], 500);
@@ -175,10 +181,11 @@ class BookAdminController extends Controller
 
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         try {
             $book = Books::find($id);
             if (!$book) {
-                return response()->json(['message' => 'Book not found'], 404);
+                return HttpResponse::respondError('Book not found');
             }
             $book->images()->delete(); 
             if ($book->author) {
@@ -186,7 +193,7 @@ class BookAdminController extends Controller
                 $author->delete(); 
             }
             $book->delete();
-            return response()->json(['message' => 'Book and related author deleted successfully'], 200);
+            return HttpResponse::respondWithSuccess(NULL,"Xóa thành công");
         } catch (\Throwable $e) {
             return response()->json(['message' => 'Failed to delete book: ' . $e->getMessage()], 500);
         }

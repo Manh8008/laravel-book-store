@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\Orders;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Library\HttpResponse;
+use Illuminate\Support\Facades\Auth;
 
 class OrderAdminController extends Controller
 {
     public function getAllOrder()
     {
-        $order = Orders::all();
+        $order = Orders::orderBy('created_at', 'desc')->get();
         return HttpResponse::respondWithSuccess($order);
     }
 
@@ -20,13 +21,14 @@ class OrderAdminController extends Controller
     {
         $order = Orders::where('order_status', 'Chờ xác nhận')->orderBy('order_date', 'asc')->get();
         if ($order->isEmpty()) {
-            return HttpResponse::respondWithSuccess('Không có đơn hàng chờ xác nhận');
+            return HttpResponse::respondWithSuccess(NULL,'Không có đơn hàng chờ xác nhận');
         }  
         return HttpResponse::respondWithSuccess($order,"Lấy tất cả đơn hàng chờ xác nhận thành công");
     }
 
     public function updateOrderStatus(Request $request,$id)
     {
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         $validator = Validator::make($request->all(), [
             'order_status' => 'required|string|max:20',
         ]);
@@ -35,7 +37,7 @@ class OrderAdminController extends Controller
         }
         $order = Orders::find($id);
         if (!$order) {
-            return HttpResponse::respondWithError("Đơn hàng không tồn tại");
+            return HttpResponse::respondError("Đơn hàng không tồn tại");
         }
         $order->order_status = $request->order_status;
         $order->save();

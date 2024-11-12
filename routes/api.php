@@ -15,7 +15,7 @@ use App\Http\Controllers\API\User\CheckOutController;
 use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
-
+use App\Http\Controllers\API\Admin\LoginAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,41 +41,57 @@ Route::group([
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
 
     // Productphp
-    Route::post("admin/storeCatalog", [CatalogAdminController::class, "store"]);
-    Route::put("admin/updateCatalog/{id}", [CatalogAdminController::class, "update"]);
-    Route::delete("admin/destroyCatalog/{id}", [CatalogAdminController::class, "destroy"]);
 
     // Category
-    Route::post("admin/storeBook", [BookAdminController::class, "store"]);
-    Route::put("admin/updateBook/{id}", [BookAdminController::class, "update"]);
-    Route::delete("admin/deleteBook/{id}", [BookAdminController::class, "destroy"]);
 
     // Order
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
-});  
+}); 
+    
     Route::get("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
 
-Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
-Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
-Route::get('/getAllCategories', [CategoryController::class, 'index']);
-Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
-Route::get('/books/search', [BookController::class, 'search']);
+    Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
+    Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
+    Route::get('/getAllCategories', [CategoryController::class, 'index']);
+    Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
+    Route::get('/books/search', [BookController::class, 'search']);
 
 // Loacation
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/address/store', [LocationController::class, 'store']);
-    Route::put('/address/update/{id}', [LocationController::class, 'update']);
-    Route::delete('/address/destroy/{id}', [LocationController::class, 'destroy']);
-    Route::put('/address/defaultUpdate/{id}', [LocationController::class, 'defaultUpdate']);
-    Route::get('getAddressesById/{id}', [LocationController::class, 'getAddressesById']);
-});
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/address/store', [LocationController::class, 'store']);
+        Route::put('/address/update/{id}', [LocationController::class, 'update']);
+        Route::delete('/address/destroy/{id}', [LocationController::class, 'destroy']);
+        Route::put('/address/defaultUpdate/{id}', [LocationController::class, 'defaultUpdate']);
+        Route::get('getAddressesById/{id}', [LocationController::class, 'getAddressesById']);
+    });
 
 
-// Orderadmin
+
+
+    // Admin 
+    // Login
+    Route::post("admin/login", [LoginAdminController::class, "login"]);
+    // Orderadmin
     Route::get('/search-orders', [OrderAdminController::class, 'searchOrders']);
     Route::get('/pending-orders', [OrderAdminController::class, 'getAllPendingOrders']);
+    Route::get('/getAllOrder', [OrderAdminController::class, 'getAllOrder']);
 
+
+    Route::middleware(['auth:sanctum', 'checkAdmin'])->group(function () {
+        // category
+        Route::post("admin/storeCatalog", [CatalogAdminController::class, "store"]);
+        Route::put("admin/updateCatalog/{id}", [CatalogAdminController::class, "update"]);
+        Route::delete("admin/destroyCatalog/{id}", [CatalogAdminController::class, "destroy"]);
+
+        // Books
+        Route::post("admin/storeBook", [BookAdminController::class, "store"]);
+        Route::put("admin/updateBook/{id}", [BookAdminController::class, "update"]);
+        Route::delete("admin/deleteBook/{id}", [BookAdminController::class, "destroy"]);
+        // Orders
+        Route::put("admin/updateOrderStatus/{id}", [OrderAdminController::class, "updateOrderStatus"]);
+        
+    });
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
