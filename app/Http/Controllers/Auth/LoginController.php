@@ -28,6 +28,7 @@ class LoginController extends Controller
             if (Auth::attempt(['email' => $request->email, "password" => $request->password])) 
             {
                 $user = User::where('email', $request->email)->first();
+                if (!$user->is_verified) return HttpResponse::respondError("Tài khoản chưa được xác minh. Vui lòng kiểm tra email và nhập mã OTP để xác minh tài khoản.");
                 $user->last_login_date = now();
                 $user->save();
                 $token = $user->createToken("access_token", expiresAt: now()->addDay())->plainTextToken;

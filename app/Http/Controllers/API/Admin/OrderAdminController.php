@@ -14,7 +14,7 @@ class OrderAdminController extends Controller
     public function getAllOrder()
     {
         $order = Orders::orderBy('created_at', 'desc')->get();
-        return HttpResponse::respondWithSuccess($order);
+        return HttpResponse::respondWithSuccess($order,"Success");
     }
 
     public function getAllPendingOrders()
@@ -33,7 +33,7 @@ class OrderAdminController extends Controller
             'order_status' => 'required|string|max:20',
         ]);
         if ($validator->fails()) {
-            return HttpResponse::respondWithError($validator->errors());
+            return HttpResponse::respondError($validator->errors());
         }
         $order = Orders::find($id);
         if (!$order) {
@@ -49,7 +49,7 @@ class OrderAdminController extends Controller
         $query = $request->input('query');
         $order = Orders::where('order_code', 'like', '%' . $query . '%')->get();
         if ($order->isEmpty()) {
-            return HttpResponse::respondWithError("Không tìm thấy đơn hàng nào");
+            return HttpResponse::respondError("Không tìm thấy đơn hàng nào");
         }            
         return HttpResponse::respondWithSuccess($order,"Tìm kiếm thành công");
     }

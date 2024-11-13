@@ -114,6 +114,13 @@ class CheckOutController extends Controller
             ]);
             // Tạo chi tiết đơn hàng
             foreach ($request->items as $item) {
+                $book = Books::find($item['book_id']);
+                if (!$book) {
+                    return HttpResponse::respondError("Sản phẩm với ID " . $item['book_id'] . " không tồn tại.");
+                }
+                if ($item['quantity'] <= 0) {
+                    return HttpResponse::respondError("Số lượng sản phẩm phải lớn hơn 0.");
+                }
                 OrderDetail::create([
                     'order_id' => $order->id,
                     'book_id' => $item['book_id'],
@@ -125,8 +132,8 @@ class CheckOutController extends Controller
             // Cấu hình VNPAY
             $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
             $vnp_Returnurl = "http://127.0.0.1:8000/api/vnpay-return"; 
-            $vnp_TmnCode = env('VNP_TMN_CODE'); // Mã website tại VNPAY 
-            $vnp_HashSecret = env('VNP_HASH_SECRET'); // Chuỗi bí mật
+            $vnp_TmnCode = 'HKJWG7M6'; // Mã website tại VNPAY 
+            $vnp_HashSecret = '6X771W24XNIWWMDM4IXA8I7HIVDPXF4G'; // Chuỗi bí mật
 
             // Thông tin thanh toán
             $vnp_TxnRef = $order->order_code; // Mã đơn hàng

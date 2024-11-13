@@ -29,6 +29,8 @@ use App\Http\Controllers\API\Admin\LoginAdminController;
 */
 
 Route::post("register", [RegisterController::class, "register"]);
+Route::post("verify-otp", [RegisterController::class, "verifyOtp"]);
+Route::post("resend-otp", [RegisterController::class, "resendOtp"]);
 Route::post("login", [LoginController::class, "login"]);
 Route::post("forgot-password", [ForgotPasswordController::class, "forgotPassword"])->name('password.reset');
 Route::post("reset-password", [ForgotPasswordController::class, "resetPassword"]);
@@ -40,11 +42,6 @@ Route::group([
     Route::get("logout", [LogoutController::class, "logout"]);
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
 
-    // Productphp
-
-    // Category
-
-    // Order
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
 }); 
@@ -52,10 +49,12 @@ Route::group([
     Route::get("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
 
     Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
+    Route::get('/getNewBook', [BookController::class, 'getNewBook']);
     Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
     Route::get('/getAllCategories', [CategoryController::class, 'index']);
     Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
     Route::get('/books/search', [BookController::class, 'search']);
+
 
 // Loacation
     Route::middleware('auth:sanctum')->group(function () {
@@ -71,7 +70,8 @@ Route::group([
 
     // Admin 
     // Login
-    Route::post("admin/login", [LoginAdminController::class, "login"]);
+    Route::post("admin/login", [LoginAdminController::class, "loginAdmin"]);
+    // Route::post("admin/register", [LoginAdminController::class, "registerAdmin"]);
     // Orderadmin
     Route::get('/search-orders', [OrderAdminController::class, 'searchOrders']);
     Route::get('/pending-orders', [OrderAdminController::class, 'getAllPendingOrders']);

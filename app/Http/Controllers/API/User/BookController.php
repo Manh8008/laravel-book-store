@@ -16,6 +16,14 @@ class BookController extends Controller
         return HttpResponse::respondWithSuccess($books);
     }
 
+    public function getNewBook()
+    {
+        $books = Books::with(['author', 'images'])
+                    ->orderBy('created_at', 'desc')  
+                    ->get();
+        return HttpResponse::respondWithSuccess($books);
+    }
+
     public function getBookDetails($id)
     {
         $books = Books::with(['author','images'])->find($id);

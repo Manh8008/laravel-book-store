@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Staff extends Authenticatable  // Kế thừa Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    protected $table = 'staff';
     protected $fillable = [
         'name',
         'email',

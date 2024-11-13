@@ -15,18 +15,15 @@ class ProfileController extends Controller
     // {
     //     try {
     //         $userData = Auth::user();
-    //         if (!$userData) 
-    //         {
+    //         if (!$userData) {
     //             return HttpResponse::respondError('Người dùng chưa đăng nhập');
     //         }
     //         $address = $userData->address;
-    //         return HttpResponse::respondWithSuccess($userData,'Thông tin người dùng được lấy thành công');
+    //         return HttpResponse::respondWithSuccess($userData, 'Thông tin người dùng được lấy thành công');
     //     } catch (\Throwable $th) {
-    //         Return HttpResponse::respondUnAuthenticated();
+    //         return HttpResponse::respondUnAuthenticated();
     //     }
     // }
-
-
     public function profile()
     {
         try {
@@ -35,10 +32,13 @@ class ProfileController extends Controller
                 return HttpResponse::respondError('Người dùng chưa đăng nhập');
             }
             $address = $userData->address;
-            return HttpResponse::respondWithSuccess($userData, 'Thông tin người dùng được lấy thành công');
+            $orders = $userData->orders()->orderBy('created_at', 'desc')->get();
+            return HttpResponse::respondWithSuccess([
+                'user' => $userData,
+                'orders' => $orders
+            ], 'Thông tin người dùng, địa chỉ và đơn hàng được lấy thành công');
         } catch (\Throwable $th) {
             return HttpResponse::respondUnAuthenticated();
         }
     }
-
 }
