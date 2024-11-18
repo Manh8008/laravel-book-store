@@ -9,32 +9,70 @@ use App\Http\Library\HttpResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Http;
 
 class CatalogAdminController extends Controller
 {
+    // public function store(Request $request)
+    // {
+    //     if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
+    //     $request->validate([
+    //         'name' => 'required|string',
+    //         'image' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
+    //     ]);
+    //     $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+    //     Storage::disk('public')->put($imageName, file_get_contents($request->image->getRealPath()));
+    //     $imageUrl = Storage::url($imageName);
+    //     $url = url($imageUrl);
+    //     $category = Categories::create([
+    //         'name' => $request->name,
+    //         'image' => $url,
+    //     ]);
+    //     return response()->json($category, 201);
+    // }
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Bạn không có quyền truy cập'], 403);
+        }
         $request->validate([
-            'name' => 'required|string',
-            'image' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048|unique:categories,image',
+            'name' => 'required|string|max:255',
+            'image.*' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-        $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
-        Storage::disk('public')->put($imageName, file_get_contents($request->image->getRealPath()));
-        $imageUrl = Storage::url($imageName);
-        $url = url($imageUrl);
+        $imageUrl = null;
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
+            Storage::disk('public')->put($imageName, file_get_contents($request->image->getRealPath()));
+            $imageUrl = url(Storage::url($imageName));
+        } 
+        elseif (filter_var($request->image, FILTER_VALIDATE_URL)) {
+            try {
+                $response = Http::get($request->image);
+                if ($response->status() !== 200 || !str_contains($response->header('Content-Type'), 'image')) {
+                    return HttpResponse::respondError('URL không hợp lệ hoặc không phải là ảnh');
+                }
+                $imageContent = $response->body();
+                $imageName = Str::random(32) . '.' . pathinfo(parse_url($request->image, PHP_URL_PATH), PATHINFO_EXTENSION);
+                Storage::disk('public')->put($imageName, $imageContent);
+                $imageUrl = url(Storage::url($imageName));
+            } catch (\Exception $e) {
+                return HttpResponse::respondError('Không thể kết nối đến URL');
+            }
+        } 
+        else {
+            return HttpResponse::respondError('Dữ liệu hình ảnh không hợp lệ');
+        }
         $category = Categories::create([
             'name' => $request->name,
-            'image' => $url,
+            'image' => $imageUrl,
         ]);
-        return response()->json($category, 201);
+        return HttpResponse::respondWithSuccess($category,'Thêm thành công');
     }
 
     public function show($id)
     {
         $category = Categories::findOrFail($id);
-        return response()->json($category);
+        return HttpResponse::respondWithSuccess($category);
     }
 
     public function update(Request $request, $id)
@@ -71,11 +109,11 @@ class CatalogAdminController extends Controller
                 $url = url($imageUrl);
                 $dataToUpdate['image'] = $url ;
             } else {
-                return response()->json(['error' => 'Invalid image data'], 400);
+                return HttpResponse::respondError('Dữ liệu hình ảnh không hợp lệ');
             }
         }
         $category->update($dataToUpdate);
-        return response()->json($category, 200);
+        return HttpResponse::respondWithSuccess($category,'Update thành công');
     }
 
     public function destroy($id)
@@ -83,6 +121,6 @@ class CatalogAdminController extends Controller
         if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         $category = Categories::findOrFail($id);
         $category->delete();
-        return response()->json(['message' => 'Category deleted']);
+        return HttpResponse::respondWithSuccess(null,'Xóa thành công');
     }
 }
