@@ -6,7 +6,6 @@ use App\Http\Library\HttpResponse;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth; 
 
 class CheckAdmin
 {
@@ -17,15 +16,10 @@ class CheckAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Auth::guard('staff')->user();
         if ($request->user()->role == "admin") {
             return $next($request);
         }
-
         return HttpResponse::respondUnAuthenticated();
-        // return response()->json([
-        //     'status' => false,
-        //     'message' => 'sai',
-        // ], 500);
+        
     }
 }

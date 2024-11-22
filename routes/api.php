@@ -16,7 +16,7 @@ use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
 use App\Http\Controllers\API\Admin\LoginAdminController;
-
+use App\Http\Middleware\CheckAdmin;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -69,7 +69,7 @@ Route::group([
     Route::get('/getAllOrder', [OrderAdminController::class, 'getAllOrder']);
 
 
-    Route::middleware(['auth:sanctum', 'checkAdmin'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         // category
         Route::post("admin/storeCatalog", [CatalogAdminController::class, "store"]);
         Route::put("admin/updateCatalog/{id}", [CatalogAdminController::class, "update"]);

@@ -30,14 +30,11 @@ class CatalogAdminController extends Controller
     //     ]);
     //     return response()->json($category, 201);
     // }
+    
     public function store(Request $request)
     {
-        // if (!Auth::check() || Auth::user()->role !== 'admin') {
-        //     return response()->json(['error' => 'Bạn không có quyền truy cập'], 403);
-        // }
-        
         try {
-            $request->user()->tokens()->delete();
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
             $request->validate([
                 'name' => 'required|string|max:255',
                 'image.*' => 'required|file|mimes:jpeg,png,jpg,gif|max:2048'
@@ -71,6 +68,7 @@ class CatalogAdminController extends Controller
             ]);
             return HttpResponse::respondWithSuccess($category,'Thêm thành công');
         } catch (\Throwable $th) {
+            // dd(1)
             return response()->json([
                 'status' => false,
                 'message' => $th->getMessage(),
@@ -87,7 +85,7 @@ class CatalogAdminController extends Controller
 
     public function update(Request $request, $id)
     {
-        // if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
+        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         $category = Categories::findOrFail($id);
         $request->validate([
             'name' => 'required|string|max:255',
