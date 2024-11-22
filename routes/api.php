@@ -41,21 +41,16 @@ Route::group([
     Route::get("profile", [ProfileController::class, "profile"]);
     Route::get("logout", [LogoutController::class, "logout"]);
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
-
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
 }); 
-    
     Route::get("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
-
     Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
     Route::get('/getNewBook', [BookController::class, 'getNewBook']);
     Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
     Route::get('/getAllCategories', [CategoryController::class, 'index']);
     Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
     Route::get('/books/search', [BookController::class, 'search']);
-
-
 // Loacation
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/address/store', [LocationController::class, 'store']);
@@ -64,10 +59,6 @@ Route::group([
         Route::put('/address/defaultUpdate/{id}', [LocationController::class, 'defaultUpdate']);
         Route::get('getAddressesById/{id}', [LocationController::class, 'getAddressesById']);
     });
-
-
-
-
     // Admin 
     // Login
     Route::post("admin/login", [LoginAdminController::class, "loginAdmin"]);

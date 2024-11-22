@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'staff' => [ // Thêm guard cho staff
+        'driver' => 'session',
+        'provider' => 'staff',
+        ],
     ],
 
     /*

@@ -51,8 +51,6 @@ class LoginAdminController extends Controller
                 'password' => 'required'
             ]);
             if ($validator->fails()) return HttpResponse::respondError($validator->errors());
-
-            // dd(Auth::attempt(['email' => $request->email, 'password' => $request->password]));
             $staff = Staff::where('email', $request->email)->first();
             if ($staff && Hash::check($request->password, $staff->password)) {
                 if ($staff->role !== 'admin') {

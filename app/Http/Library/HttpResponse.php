@@ -23,7 +23,7 @@ class HttpResponse
         ], $code);
     }
 
-    public static function respondUnAuthenticated($message = "Unauthenticated")
+    public static function respondUnAuthenticated($message = "Unauthenticated - Không Tìm thấy Sai")
     {
         return response()->json([
         'success' => false,
