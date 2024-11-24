@@ -69,7 +69,7 @@ Route::group([
     Route::get('/getAllOrder', [OrderAdminController::class, 'getAllOrder']);
 
 
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:sanctum','checkAdmin'])->group(function () {
         // category
         Route::post("admin/storeCatalog", [CatalogAdminController::class, "store"]);
         Route::put("admin/updateCatalog/{id}", [CatalogAdminController::class, "update"]);

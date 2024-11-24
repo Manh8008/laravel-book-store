@@ -190,15 +190,6 @@ class CheckOutController extends Controller
 
     public function vnpayReturn(Request $request)
     {
-        // $vnp_HashSecret = env('VNP_HASH_SECRET'); 
-        // $inputData = $request->all();
-        // $vnp_SecureHash = $inputData['vnp_SecureHash'] ?? '';
-        // unset($inputData['vnp_SecureHash']);
-        // ksort($inputData);
-        // $hashData = urldecode(http_build_query($inputData));
-        // $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-        // dd($secureHash,$vnp_SecureHash);
-        // if ($secureHash === $vnp_SecureHash) {
             if ($request->vnp_TransactionStatus == '00') {
                 $orderCode = $request['vnp_TxnRef'];
                 $order = Orders::where('order_code', $orderCode)->first();
@@ -211,12 +202,18 @@ class CheckOutController extends Controller
                         $payment->payment_status = 'Đã thanh toán';
                         $payment->save();
                     }
-                    return HttpResponse::respondWithSuccess(['order_code' => $order->order_code], 'Thanh toán thành công! Đơn hàng của bạn đã được xác nhận.');
+                    $successUrl = "http://localhost:3000/checkout/payment/payment-result?status=success&order_code=" . $order->order_code;
+                    return redirect()->to($successUrl);
+                    // return HttpResponse::respondWithSuccess(['order_code' => $order->order_code], 'Thanh toán thành công! Đơn hàng của bạn đã được xác nhận.');
                 } else {
-                    return HttpResponse::respondError('Không tìm thấy đơn hàng.');
+                    $errorUrl = "http://localhost:3000/checkout/payment/payment-result?status=error&message=Không tìm thấy đơn hàng.";
+                    return redirect()->to($errorUrl);
+                    // return HttpResponse::respondError('Không tìm thấy đơn hàng.');
                 }
             } else {
-                return HttpResponse::respondError('Thanh toán thất bại. Vui lòng thử lại.');
+                $errorUrl = "http://localhost:3000/checkout/payment/payment-result?status=error&message=Thanh toán thất bại. Vui lòng thử lại.";
+                return redirect()->to($errorUrl);
+                // return HttpResponse::respondError('Thanh toán thất bại. Vui lòng thử lại.');
             }
         // } else {
         //     return HttpResponse::respondError('Dữ liệu không hợp lệ.');
