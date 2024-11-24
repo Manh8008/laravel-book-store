@@ -23,7 +23,8 @@ class Books extends Model
         'language',
         'format',
         'short_summary',
-        'publisher'
+        'publisher',
+        'sales_count'
     ];
 
     // Mỗi sách thuộc 1 danh mục

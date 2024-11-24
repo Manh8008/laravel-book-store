@@ -127,6 +127,7 @@ class CheckOutController extends Controller
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
+
             }
             DB::commit();
             // Cấu hình VNPAY

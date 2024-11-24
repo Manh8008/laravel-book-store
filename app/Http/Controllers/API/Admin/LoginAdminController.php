@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Staff;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Library\HttpResponse;
@@ -23,13 +23,13 @@ class LoginAdminController extends Controller
             ]);
             if ($validator->fails()) return HttpResponse::respondError($validator->errors());
             // dd(Auth::attempt(['email' => $request->email, 'password' => $request->password]));
-            $user = User::where('email', $request->email)->first();
-            if ($user && Hash::check($request->password, $user->password)) {
-                if ($user->role !== 'admin') {
+            $staff = Staff::where('email', $request->email)->first();
+            if ($staff && Hash::check($request->password, $staff->password)) {
+                if ($staff->role !== 'admin') {
                     return HttpResponse::respondError("Bạn không có quyền truy cập.");
                 }
                 // Tạo token
-                $token = $user->createToken("admin_access_token")->plainTextToken;
+                $token = $staff->createToken("admin_access_token")->plainTextToken;
                 return HttpResponse::respondWithSuccess([
                     'token_type' => "Bearer",
                     'access_token' => $token

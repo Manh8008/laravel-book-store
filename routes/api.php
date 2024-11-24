@@ -51,6 +51,7 @@ Route::group([
     Route::get('/getAllCategories', [CategoryController::class, 'index']);
     Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
     Route::get('/books/search', [BookController::class, 'search']);
+    Route::get('/best-sellers', [BookController::class, 'getBestSellers']);
 // Loacation
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/address/store', [LocationController::class, 'store']);
