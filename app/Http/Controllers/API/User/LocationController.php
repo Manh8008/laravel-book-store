@@ -14,93 +14,117 @@ class LocationController extends Controller
 {
     public function store(Request $request)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return HttpResponse::respondError('Bạn chưa đăng nhập');
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return HttpResponse::respondError('Bạn chưa đăng nhập');
+            }
+            $validator = Validator::make($request->all(), [
+                'address_line' => 'required|string|max:255',
+                'name' => 'required|string|max:100',
+                'phone' => 'nullable|string|max:15',
+                'town' => 'required|string|max:100',
+                'district' => 'required|string|max:100',
+                'province' => 'required|string|max:100',
+                'townCode' => 'nullable|string|max:100',       
+                'districtCode' => 'nullable|string|max:100',  
+                'provinceCode' => 'nullable|string|max:100',
+                'default' => 'nullable|boolean',
+            ]);
+            if ($validator->fails()) {
+                return HttpResponse::respondError($validator->errors());
+            }
+            if($request->default == 1)
+            {
+                Addresses::where('user_id', $user->id)
+                ->where('default', true)
+                ->update(['default' => false]);
+            }
+            $address = Addresses::create([
+                'address_line' => $request->address_line,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'town' => $request->town,
+                'district' => $request->district,
+                'province' => $request->province,
+                'townCode' => $request->townCode,             
+                'districtCode' => $request->districtCode,     
+                'provinceCode' => $request->provinceCode,
+                'user_id' => $user->id,
+                'default' => $request->default,
+            ]);
+            return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được tạo thành công');
+        } catch (\Throwable $th) {
+            return HttpResponse::respondNotFound();
         }
-        $validator = Validator::make($request->all(), [
-            'address_line' => 'required|string|max:255',
-            'name' => 'required|string|max:100',
-            'phone' => 'nullable|string|max:15',
-            'town' => 'required|string|max:100',
-            'district' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
-            'default' => 'nullable|boolean',
-        ]);
-        if ($validator->fails()) {
-            return HttpResponse::respondError($validator->errors());
-        }
-        if($request->default == 1)
-        {
-            Addresses::where('user_id', $user->id)
-            ->where('default', true)
-            ->update(['default' => false]);
-        }
-        $address = Addresses::create([
-            'address_line' => $request->address_line,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'town' => $request->town,
-            'district' => $request->district,
-            'province' => $request->province,
-            'user_id' => $user->id,
-            'default' => $request->default
-        ]);
-        return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được tạo thành công');
     }
 
     public function update(Request $request, $id)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return HttpResponse::respondError('Bạn chưa đăng nhập');
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return HttpResponse::respondError('Bạn chưa đăng nhập');
+            }
+            $address = Addresses::find($id);
+            if (!$address) {
+                return HttpResponse::respondError('Địa chỉ không tồn tại');
+            }
+            if ($address->user_id !== $user->id) {
+                return HttpResponse::respondError('Bạn không có quyền cập nhật địa chỉ này');
+            }
+            $validator = Validator::make($request->all(), [
+                'address_line' => 'required|string|max:255',
+                'name' => 'required|string|max:100',
+                'phone' => 'nullable|string|max:15',
+                'town' => 'required|string|max:100',
+                'district' => 'required|string|max:100',
+                'province' => 'required|string|max:100',
+                'townCode' => 'nullable|string|max:100',       
+                'districtCode' => 'nullable|string|max:100',  
+                'provinceCode' => 'nullable|string|max:100',
+                'default' => 'nullable|boolean',
+            ]);
+            if ($validator->fails()) {
+                return HttpResponse::respondError($validator->errors());
+            }
+            if($request->default == 1)
+            {
+                Addresses::where('user_id', $user->id)
+                ->where('default', true)
+                ->update(['default' => false]);
+            }
+            $address->update([
+                'address_line' => $request->address_line,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'town' => $request->town,
+                'district' => $request->district,
+                'province' => $request->province,
+                'townCode' => $request->townCode,             
+                'districtCode' => $request->districtCode,     
+                'provinceCode' => $request->provinceCode,
+                'default' => $request->default,
+            ]);
+            return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được cập nhật thành công');
+        } catch (\Throwable $th) {
+            return HttpResponse::respondNotFound();
         }
-        $address = Addresses::find($id);
-        if (!$address) {
-            return HttpResponse::respondError('Địa chỉ không tồn tại');
-        }
-        if ($address->user_id !== $user->id) {
-            return HttpResponse::respondError('Bạn không có quyền cập nhật địa chỉ này');
-        }
-        $validator = Validator::make($request->all(), [
-            'address_line' => 'required|string|max:255',
-            'name' => 'required|string|max:100',
-            'phone' => 'nullable|string|max:15',
-            'town' => 'required|string|max:100',
-            'district' => 'required|string|max:100',
-            'province' => 'required|string|max:100',
-            'default' => 'nullable|boolean',
-        ]);
-        if ($validator->fails()) {
-            return HttpResponse::respondError($validator->errors());
-        }
-        if($request->default == 1)
-        {
-            Addresses::where('user_id', $user->id)
-            ->where('default', true)
-            ->update(['default' => false]);
-        }
-        $address->update([
-            'address_line' => $request->address_line,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'town' => $request->town,
-            'district' => $request->district,
-            'province' => $request->province,
-            'default' => $request->default,
-        ]);
-        return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã được cập nhật thành công');
     }   
 
     public function destroy($id)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return HttpResponse::respondError('Bạn chưa đăng nhập');
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return HttpResponse::respondError('Bạn chưa đăng nhập');
+            }
+            $address = Addresses::find($id);
+            $address->delete();
+            return HttpResponse::respondWithSuccess(null,'Địa chỉ đã được xóa thành công');
+        } catch (\Throwable $th) {
+            return HttpResponse::respondNotFound();
         }
-        $address = Addresses::find($id);
-        $address->delete();
-        return HttpResponse::respondWithSuccess(null,'Địa chỉ đã được xóa thành công');
     }
 
     public function defaultUpdate(Request $request, $id)
@@ -113,10 +137,7 @@ class LocationController extends Controller
         if (!$address || $address->user_id !== $user->id) {
             return HttpResponse::respondError('Địa chỉ không tồn tại hoặc không thuộc về bạn');
         }
-        // Kiểm tra xem địa chỉ này có phải là mặc định không
         if ($address->default) {
-            // Nếu địa chỉ đã là mặc định, thì bỏ mặc định cho địa chỉ
-            dd($address->default);
             $address->update(['default' => false]);
             return HttpResponse::respondWithSuccess($address, 'Địa chỉ đã cập nhật thành công và không còn là mặc định');
         } else {

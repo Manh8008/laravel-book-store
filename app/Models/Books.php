@@ -56,16 +56,10 @@ class Books extends Model
         return $this->hasMany(OrderDetail::class, 'book_id');
     }   
 
-    // mỗi sách có nhiều trong giỏ hàng
-    // public function shoppingCarts()
-    // {
-    //     return $this->hasMany(ShoppingCart::class, 'book_id');
-    // }
-
-    // public function details()
-    // {
-    //     return $this->hasMany(BookDetail::Class, 'book_id');
-    // }
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'book_id');
+    }
 }
 
 

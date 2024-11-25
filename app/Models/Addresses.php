@@ -18,6 +18,9 @@ class Addresses extends Model
         'district',
         'province',
         'default',
+        'townCode',
+        'districtCode',
+        'provinceCode',
     ];
 
     // Each address belongs to one customer

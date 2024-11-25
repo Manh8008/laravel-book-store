@@ -12,6 +12,7 @@ use App\Http\Controllers\API\User\BookController;
 use App\Http\Controllers\API\User\CategoryController;
 use App\Http\Controllers\API\User\LocationController;
 use App\Http\Controllers\API\User\CheckOutController;
+use App\Http\Controllers\API\User\CommentController;
 use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
@@ -45,6 +46,7 @@ Route::group([
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
 }); 
     Route::get("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
+    // Lấy sách
     Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
     Route::get('/getNewBook', [BookController::class, 'getNewBook']);
     Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
@@ -52,6 +54,11 @@ Route::group([
     Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
     Route::get('/books/search', [BookController::class, 'search']);
     Route::get('/best-sellers', [BookController::class, 'getBestSellers']);
+    Route::get('/getBooksOrderPriceDesc', [BookController::class, 'getBooksSortedByPriceDesc']);
+    Route::get('/getBooksOrderPriceAsc', [BookController::class, 'getBooksSortedByPriceAsc']);
+    Route::get('/filterByPrice', [BookController::class, 'filterByPrice']);
+    Route::get('/comments/{id}', [CommentController::class, 'getCommentsByBook']);
+    
 // Loacation
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/address/store', [LocationController::class, 'store']);
@@ -59,6 +66,10 @@ Route::group([
         Route::delete('/address/destroy/{id}', [LocationController::class, 'destroy']);
         Route::put('/address/defaultUpdate/{id}', [LocationController::class, 'defaultUpdate']);
         Route::get('getAddressesById/{id}', [LocationController::class, 'getAddressesById']);
+
+        //comment
+        Route::post("/addComment/{id}", [CommentController::class, "addComment"]);
+        Route::delete('/deleteComment/{id}', [CommentController::class, 'deleteComment']);
     });
     // Admin 
     // Login
