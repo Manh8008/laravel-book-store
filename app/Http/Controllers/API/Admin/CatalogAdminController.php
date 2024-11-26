@@ -67,8 +67,8 @@ class CatalogAdminController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
         try {
+            if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');
             $category = Categories::findOrFail($id);
             $request->validate([
                 'name' => 'required|string|max:255',
@@ -84,7 +84,6 @@ class CatalogAdminController extends Controller
                     }
                 }
                 if ($request->hasFile('image') && $request->file('image')->isValid()) {
-                    // Lưu file ảnh từ request vào storage
                     $image = $request->file('image');
                     Storage::disk('public')->put($imageName, file_get_contents($request->image->getRealPath()));
                     $imageUrl = Storage::url($imageName);
@@ -105,8 +104,19 @@ class CatalogAdminController extends Controller
             }
             $category->update($dataToUpdate);
             return HttpResponse::respondWithSuccess($category,'Update thành công');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // Xử lý lỗi khi không tìm thấy category
+            return response()->json([
+                'success' => false,
+                'message' => 'Danh mục không tồn tại'
+            ], 404);
+    
         } catch (\Throwable $th) {
-            return response()->json(['error' => 'Category not found'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi cập nhật danh mục',
+                'error' => $th->getMessage()
+            ], 500);
         }
         
     }

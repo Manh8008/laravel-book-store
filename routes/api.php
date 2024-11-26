@@ -17,6 +17,7 @@ use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
 use App\Http\Controllers\API\Admin\LoginAdminController;
+use App\Http\Controllers\API\Admin\ReviewPostController;
 use App\Http\Middleware\CheckAdmin;
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,12 @@ Route::group([
     Route::get('/pending-orders', [OrderAdminController::class, 'getAllPendingOrders']);
     Route::get('/getAllOrder', [OrderAdminController::class, 'getAllOrder']);
 
+    // Post
+    Route::get('/getAllPost', [ReviewPostController::class, 'getAllPost']);
+    Route::get('/getPostById/{id}', [ReviewPostController::class, 'getPostById']);
+
+
+
 
     Route::middleware(['auth:sanctum','checkAdmin'])->group(function () {
         // category
@@ -93,6 +100,11 @@ Route::group([
         Route::delete("admin/deleteBook/{id}", [BookAdminController::class, "destroy"]);
         // Orders
         Route::put("admin/updateOrderStatus/{id}", [OrderAdminController::class, "updateOrderStatus"]);
+
+        //Post
+        Route::post("admin/storePost", [ReviewPostController::class, "store"]);
+        Route::put("admin/updatePost/{id}", [ReviewPostController::class, "update"]);
+        Route::delete("admin/deletePost/{id}", [ReviewPostController::class, "destroy"]);
         
     });
 

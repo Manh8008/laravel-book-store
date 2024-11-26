@@ -28,6 +28,24 @@ class OrderAdminController extends Controller
         }  
         return HttpResponse::respondWithSuccess($order,"Lấy tất cả đơn hàng chờ xác nhận thành công");
     }
+
+    // public function getAllPendingOrders()
+    // {
+    //     $order = Orders::where('order_status', 'Chờ xác nhận')->orderBy('order_date', 'asc')->get();
+    //     if ($order->isEmpty()) {
+    //         return HttpResponse::respondWithSuccess(NULL,'Không có đơn hàng chờ xác nhận');
+    //     }  
+    //     return HttpResponse::respondWithSuccess($order,"Lấy tất cả đơn hàng chờ xác nhận thành công");
+    // }
+
+    // public function getAllPendingOrders()
+    // {
+    //     $order = Orders::where('order_status', 'Chờ xác nhận')->orderBy('order_date', 'asc')->get();
+    //     if ($order->isEmpty()) {
+    //         return HttpResponse::respondWithSuccess(NULL,'Không có đơn hàng chờ xác nhận');
+    //     }  
+    //     return HttpResponse::respondWithSuccess($order,"Lấy tất cả đơn hàng chờ xác nhận thành công");
+    // }
     // public function updateOrderStatus(Request $request,$id)
     // {
     //     if (Auth::user()->role !== 'admin') return HttpResponse::respondError('Bạn không có quyền truy cập');

@@ -9,6 +9,11 @@ class Reviews extends Model
 {
     use HasFactory;
     protected $table = 'reviews';
+    protected $fillable = [
+        'title',
+        'description',
+        'image_url',
+    ];
 
     public function book()
     {
