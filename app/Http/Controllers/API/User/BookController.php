@@ -42,7 +42,9 @@ class BookController extends Controller
         try {
             $minPrice = $request->input('min_price');
             $maxPrice = $request->input('max_price');
-            $books = Books::whereBetween('price', [$minPrice, $maxPrice])->get();
+            $books = Books::with(['author', 'images', 'category'])
+                            ->whereBetween('price', [$minPrice, $maxPrice])
+                            ->get();
             return HttpResponse::respondWithSuccess($books);
         } catch (\Throwable $th) {
             return HttpResponse::respondNotFound();
@@ -52,7 +54,7 @@ class BookController extends Controller
     public function getBooksSortedByPriceDesc()
     {
         try {
-            $books = Books::orderBy('price', 'desc')->get();
+            $books = Books::with(['author', 'images','category'])->orderBy('price', 'desc')->get();
         return HttpResponse::respondWithSuccess($books);
         } catch (\Throwable $th) {
             return HttpResponse::respondNotFound();
@@ -62,7 +64,7 @@ class BookController extends Controller
     public function getBooksSortedByPriceAsc()
     {
         try {
-            $books = Books::orderBy('price', 'asc')->get();
+            $books = Books::with(['author', 'images','category'])->orderBy('price', 'asc')->get();
         return HttpResponse::respondWithSuccess($books);
         } catch (\Throwable $th) {
             return HttpResponse::respondNotFound();
@@ -72,7 +74,7 @@ class BookController extends Controller
     public function getNewBook()
     {
         try {
-            $books = Books::with(['author', 'images'])
+            $books = Books::with(['author', 'images','category'])
                     ->orderBy('created_at', 'desc')  
                     ->get();
         return HttpResponse::respondWithSuccess($books);
@@ -84,7 +86,7 @@ class BookController extends Controller
     public function getBestSellers()
     {
         try {
-            $bestSellers = Books::with(['author', 'images']) 
+            $bestSellers = Books::with(['category','author', 'images']) 
             ->take(10)
             ->get();
             return HttpResponse::respondWithSuccess($bestSellers);

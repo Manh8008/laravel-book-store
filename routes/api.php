@@ -18,6 +18,8 @@ use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
 use App\Http\Controllers\API\Admin\LoginAdminController;
 use App\Http\Controllers\API\Admin\ReviewPostController;
+use App\Http\Controllers\API\Admin\CommentAdminController;
+use App\Http\Controllers\API\Admin\BannerAdminController;
 use App\Http\Middleware\CheckAdmin;
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +53,6 @@ Route::group([
     Route::get('/getAllBooks', [BookController::class, 'getAllProducts']);
     Route::get('/getNewBook', [BookController::class, 'getNewBook']);
     Route::get('/getBookDetail/{id}', [BookController::class, 'getBookDetails']);
-    Route::get('/getAllCategories', [CategoryController::class, 'index']);
     Route::get('/getBookByCategory/{category_id}', [BookController::class, 'getBookByCategory']);
     Route::get('/books/search', [BookController::class, 'search']);
     Route::get('/best-sellers', [BookController::class, 'getBestSellers']);
@@ -59,6 +60,11 @@ Route::group([
     Route::get('/getBooksOrderPriceAsc', [BookController::class, 'getBooksSortedByPriceAsc']);
     Route::get('/filterByPrice', [BookController::class, 'filterByPrice']);
     Route::get('/comments/{id}', [CommentController::class, 'getCommentsByBook']);
+
+    // Categỏy
+    Route::get('/getAllCategories', [CategoryController::class, 'index']);
+    Route::get('/categories/search', [CategoryController::class, 'search']);
+
     
 // Loacation
     Route::middleware('auth:sanctum')->group(function () {
@@ -85,6 +91,9 @@ Route::group([
     Route::get('/getAllPost', [ReviewPostController::class, 'getAllPost']);
     Route::get('/getPostById/{id}', [ReviewPostController::class, 'getPostById']);
 
+    // commnet
+    Route::get('/getAllComment', [CommentAdminController::class, 'getAllComment']);
+    Route::get('/getCommentsByBookId/{id}', [CommentAdminController::class, 'getCommentsByBookId']);
 
 
 
@@ -106,6 +115,13 @@ Route::group([
         Route::put("admin/updatePost/{id}", [ReviewPostController::class, "update"]);
         Route::delete("admin/deletePost/{id}", [ReviewPostController::class, "destroy"]);
         
+        //Comment
+        Route::delete("admin/deleteComment/{id}", [CommentAdminController::class, "deleteComment"]);
+
+        // Banner
+        Route::post("admin/storeBanner", [BannerAdminController::class, "store"]);
+        Route::delete("admin/deleteBanner/{id}", [BannerAdminController::class, "destroy"]);
+
     });
 
 

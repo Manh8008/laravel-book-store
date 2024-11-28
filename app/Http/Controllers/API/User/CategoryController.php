@@ -14,4 +14,18 @@ class CategoryController extends Controller
         $categories = Categories::all();
         return HttpResponse::respondWithSuccess($categories);
     }
+
+
+    public function search(Request $request)
+    {
+        try {
+            $query = $request->input('query');
+            if (empty($query)) return HttpResponse::respondError('Query is required.');
+            $categories = Categories::where('name', 'LIKE', "%{$query}%")->get();
+            if ($categories->isEmpty()) return HttpResponse::respondError('No books found');
+            return HttpResponse::respondWithSuccess($categories);
+        } catch (\Throwable $th) {
+            return HttpResponse::respondNotFound();
+        }
+    }
 }
