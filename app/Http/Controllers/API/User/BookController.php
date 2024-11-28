@@ -84,7 +84,9 @@ class BookController extends Controller
     public function getBestSellers()
     {
         try {
-            $bestSellers = Books::orderBy('sales_count', 'desc')->take(10)->get();
+            $bestSellers = Books::with(['author', 'images']) 
+            ->take(10)
+            ->get();
             return HttpResponse::respondWithSuccess($bestSellers);
         } catch (\Throwable $th) {
             return HttpResponse::respondNotFound();
