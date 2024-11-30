@@ -82,6 +82,7 @@ class ReviewPostController extends Controller
                 if ($request->hasFile('image') && $request->file('image')->isValid()) {
                     // Lưu file ảnh từ request vào storage
                     $image = $request->file('image');
+                    $imageName = Str::random(32) . '.' . $image->getClientOriginalExtension();
                     Storage::disk('public')->put($imageName, file_get_contents($request->image->getRealPath()));
                     $imageUrl = Storage::url($imageName);
                     $url = url($imageUrl);

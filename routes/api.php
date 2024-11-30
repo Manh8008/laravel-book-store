@@ -100,7 +100,7 @@ Route::group([
     Route::middleware(['auth:sanctum','checkAdmin'])->group(function () {
         // category
         Route::post("admin/storeCatalog", [CatalogAdminController::class, "store"]);
-        Route::post("admin/updateCatalog/{id}", [CatalogAdminController::class, "update"]);
+        Route::put("admin/updateCatalog/{id}", [CatalogAdminController::class, "update"]);
         Route::delete("admin/destroyCatalog/{id}", [CatalogAdminController::class, "destroy"]);
 
         // Books
