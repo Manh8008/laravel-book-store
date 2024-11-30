@@ -80,7 +80,6 @@ class CheckOutController extends Controller
         if (!$userAddress) {
             return HttpResponse::respondError('Người dùng chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi đặt hàng.');
         }
-
         $request->validate([
             'items' => 'required|array', // Dữ liệu sản phẩm
             'total_amount' => 'required|numeric', // Tổng tiền
@@ -89,13 +88,10 @@ class CheckOutController extends Controller
         DB::beginTransaction();
 
         try {
-            // Tạo thanh toán
             $payment = Payments::create([
                 'payment_method' => 'VNPAY',
                 'payment_status' => 'Chưa thanh toán',
             ]);
-
-            // Tạo đơn hàng
             $order = Orders::create([
                 'user_id' => $user->id,
                 'address_id' => $userAddress->id,
@@ -127,7 +123,6 @@ class CheckOutController extends Controller
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                 ]);
-
             }
             DB::commit();
             // Cấu hình VNPAY
@@ -135,7 +130,6 @@ class CheckOutController extends Controller
             $vnp_Returnurl = "http://127.0.0.1:8000/api/vnpay-return"; 
             $vnp_TmnCode = 'HKJWG7M6'; // Mã website tại VNPAY 
             $vnp_HashSecret = '6X771W24XNIWWMDM4IXA8I7HIVDPXF4G'; // Chuỗi bí mật
-
             // Thông tin thanh toán
             $vnp_TxnRef = $order->order_code; // Mã đơn hàng
             $vnp_OrderInfo = "Thanh toán đơn hàng " . $order->order_code;
@@ -144,7 +138,6 @@ class CheckOutController extends Controller
             $vnp_Locale = "vn";
             $vnp_IpAddr = $request->ip();
             $vnp_ExpireDate = Carbon::now()->addMinutes(30)->format('YmdHis');
-
             // Tạo dữ liệu thanh toán
             $inputData = [
                 "vnp_Version" => "2.1.0",
@@ -175,7 +168,6 @@ class CheckOutController extends Controller
                 }
                 $query .= urlencode($key) . "=" . urlencode($value) . '&';
             }
-            
             $vnp_Url = $vnp_Url . "?" . $query;
             if (isset($vnp_HashSecret)) {
                 $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//  
@@ -196,7 +188,7 @@ class CheckOutController extends Controller
                 $order = Orders::where('order_code', $orderCode)->first();
                 if ($order) {
                     $order->payment_status = 'Đã thanh toán';
-                    $order->order_status = 'Đã xác nhận';
+                    // $order->order_status = 'Chờ xác nhận';
                     $order->save();
                     $payment = Payments::find($order->payment_id);
                     if ($payment) {
