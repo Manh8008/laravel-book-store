@@ -13,6 +13,7 @@ use App\Http\Controllers\API\User\CategoryController;
 use App\Http\Controllers\API\User\LocationController;
 use App\Http\Controllers\API\User\CheckOutController;
 use App\Http\Controllers\API\User\CommentController;
+use App\Http\Controllers\API\User\BannerController;
 use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
@@ -64,6 +65,11 @@ Route::group([
     // Categỏy
     Route::get('/getAllCategories', [CategoryController::class, 'index']);
     Route::get('/categories/search', [CategoryController::class, 'search']);
+    Route::get('/getCategoryById/{id}', [CategoryController::class, 'getCategoryByid']);
+
+    // Banner 
+    Route::get('/banner', [BannerController::class, 'index']);
+
 
     
 // Loacation

@@ -15,6 +15,17 @@ class CategoryController extends Controller
         return HttpResponse::respondWithSuccess($categories);
     }
 
+    public function getCategoryByid($id)
+    {
+        try {
+            $category = Categories::find($id); // Tìm danh mục theo ID
+            if (!$category)   return HttpResponse::respondWithError('Category not found', 404);
+            return HttpResponse::respondWithSuccess($category);
+        } catch (\Throwable $th) {
+            return HttpResponse::respondNotFound();
+        }
+    }
+
 
     public function search(Request $request)
     {
@@ -28,4 +39,5 @@ class CategoryController extends Controller
             return HttpResponse::respondNotFound();
         }
     }
+
 }
