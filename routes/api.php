@@ -14,6 +14,7 @@ use App\Http\Controllers\API\User\LocationController;
 use App\Http\Controllers\API\User\CheckOutController;
 use App\Http\Controllers\API\User\CommentController;
 use App\Http\Controllers\API\User\BannerController;
+use App\Http\Controllers\API\User\ListController;
 use App\Http\Controllers\API\Admin\BookAdminController;
 use App\Http\Controllers\API\Admin\CatalogAdminController;
 use App\Http\Controllers\API\Admin\OrderAdminController;
@@ -69,6 +70,13 @@ Route::group([
 
     // Banner 
     Route::get('/banner', [BannerController::class, 'index']);
+
+    //List Total
+    Route::get('/countUsers', [ListController::class, 'countUsers']);
+    Route::get('/countBooks', [ListController::class, 'countBooks']);
+    Route::get('/countOrders', [ListController::class, 'countOrders']);
+    Route::get('/pendingOrdersCount', [ListController::class, 'pendingOrdersCount']);
+
 
 
     
