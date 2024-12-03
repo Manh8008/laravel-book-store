@@ -49,7 +49,7 @@ class ListController extends Controller
     public function pendingOrdersCount()
     {
         try {
-            $pendingOrderCount = Orders::where('order_status','chờ xác nhận')->count();
+            $pendingOrderCount = Orders::where('order_status','Chờ xác nhận')->count();
             return HttpResponse::respondWithSuccess(['pending_orders' => $pendingOrderCount]);
         } catch (\Throwable $th) {
             return HttpResponse::respondUnAuthenticated();
