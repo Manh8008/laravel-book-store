@@ -100,7 +100,11 @@ Route::group([
     // Orderadmin
     Route::get('/search-orders', [OrderAdminController::class, 'searchOrders']);
     Route::get('/pending-orders', [OrderAdminController::class, 'getAllPendingOrders']);
+    Route::get('/confirmed-orders', [OrderAdminController::class, 'getAllConfirmedOrders']);
+    Route::get('/canceled-orders', [OrderAdminController::class, 'getAllCanceledOrder']);
+    Route::get('/complete-orders', [OrderAdminController::class, 'getAllCompleteOrders']);
     Route::get('/getAllOrder', [OrderAdminController::class, 'getAllOrder']);
+    Route::get('/getOrderDetail/{id}', [OrderAdminController::class, 'getOrderDetail']);
 
     // Post
     Route::get('/getAllPost', [ReviewPostController::class, 'getAllPost']);

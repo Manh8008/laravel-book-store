@@ -17,30 +17,60 @@ class CommentAdminController extends Controller
     public function getAllComment()
     {
         try {
-            $comments = Comment::with(['user', 'book'])
-                            ->orderBy('created_at', 'desc')
-                            ->get();
-            if ($comments->isEmpty()) return HttpResponse::respondWithSuccess([], "Không có bình luận nào.");
-            return HttpResponse::respondWithSuccess($comments,"Lấy comment thành công");    
+            $comments = Comment::with(['user', 'book.images'])
+                                ->orderBy('created_at', 'desc')
+                                ->get();
+            if ($comments->isEmpty()) {
+                return HttpResponse::respondWithSuccess([], "Không có bình luận nào.");
+            }
+            $commentsData = $comments->map(function ($comment) {
+                return [
+                    'comment_id' => $comment->id,
+                    'user' => $comment->user ? $comment->user->name : 'Ẩn danh',
+                    'content' => $comment->content,
+                    'created_at' => $comment->created_at,
+                    'book' => [
+                        'book_id' => $comment->book->id,
+                        'name' => $comment->book->name,
+                        'image_urls' => $comment->book->images->pluck('url') // Lấy URL ảnh sách
+                    ]
+                ];
+            });
+            return HttpResponse::respondWithSuccess($commentsData, "Lấy comment thành công");
         } catch (\Throwable $th) {
-            return HttpResponse::respondNotFound();
-        }                
+            return HttpResponse::respondNotFound("Lỗi khi lấy bình luận.");
+        }
     }
 
     public function getCommentsByBookId($bookId)
     {
         try {
-            $comments = Comment::with('user') 
-                            ->where('book_id', $bookId) 
-                            ->orderBy('created_at', 'desc') 
+            $comments = Comment::with(['user', 'book.images'])
+                                ->where('book_id', $bookId)
+                                ->orderBy('created_at', 'desc')
                                 ->get();
-            if ($comments->isEmpty()) return HttpResponse::respondWithSuccess([], "Không có bình luận nào.");
-            return HttpResponse::respondWithSuccess($comments,"Lấy comment thành công");
+            if ($comments->isEmpty()) {
+                return HttpResponse::respondWithSuccess([], "Không có bình luận nào.");
+            }
+            $commentsData = $comments->map(function ($comment) {
+                return [
+                    'comment_id' => $comment->id,
+                    'user' => $comment->user ? $comment->user->name : 'Ẩn danh',
+                    'content' => $comment->content,
+                    'created_at' => $comment->created_at,
+                    'book' => [
+                        'book_id' => $comment->book->id,
+                        'name' => $comment->book->name,
+                        'image_urls' => $comment->book->images->pluck('url') 
+                    ]
+                ];
+            });
+            return HttpResponse::respondWithSuccess($commentsData, "Lấy comment thành công");
         } catch (\Throwable $th) {
-            return HttpResponse::respondNotFound();
+            return HttpResponse::respondNotFound("Lỗi khi lấy bình luận.");
         }
     }
-
+    
     public function deleteComment($commentId)
     {
         try {
