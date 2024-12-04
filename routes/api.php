@@ -76,6 +76,7 @@ Route::group([
     Route::get('/countBooks', [ListController::class, 'countBooks']);
     Route::get('/countOrders', [ListController::class, 'countOrders']);
     Route::get('/pendingOrdersCount', [ListController::class, 'pendingOrdersCount']);
+    Route::get('/totalRevenue', [ListController::class, 'getTotalRevenue']);
 
 
 

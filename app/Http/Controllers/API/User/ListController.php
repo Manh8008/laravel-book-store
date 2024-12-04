@@ -55,4 +55,17 @@ class ListController extends Controller
             return HttpResponse::respondUnAuthenticated();
         }
     }
+
+    public function getTotalRevenue()
+    {
+        try {
+            $totalRevenue = Orders::where('order_status', 'complete')  
+                                ->where('payment_status', 'Đã thanh toán') 
+                                ->sum('total_amount'); 
+            if ($totalRevenue == 0) return HttpResponse::respondWithSuccess(['total_revenue' => $totalRevenue],'Chưa có đơn hàng nào');
+            return HttpResponse::respondWithSuccess(['total_revenue' => $totalRevenue]);
+        } catch (\Throwable $th) {
+            return HttpResponse::respondUnAuthenticated();
+        }
+    }
 }
