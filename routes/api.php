@@ -22,6 +22,7 @@ use App\Http\Controllers\API\Admin\LoginAdminController;
 use App\Http\Controllers\API\Admin\ReviewPostController;
 use App\Http\Controllers\API\Admin\CommentAdminController;
 use App\Http\Controllers\API\Admin\BannerAdminController;
+use App\Http\Controllers\API\Admin\UserAdminController;
 use App\Http\Middleware\CheckAdmin;
 /*
 |--------------------------------------------------------------------------
@@ -77,8 +78,9 @@ Route::group([
     Route::get('/countOrders', [ListController::class, 'countOrders']);
     Route::get('/pendingOrdersCount', [ListController::class, 'pendingOrdersCount']);
     Route::get('/totalRevenue', [ListController::class, 'getTotalRevenue']);
-
-
+    // lấy user
+    Route::get('/getAllUsers', [UserAdminController::class, 'getAllUsers']);
+    
 
     
 // Loacation
@@ -135,7 +137,7 @@ Route::group([
         Route::delete("admin/deletePost/{id}", [ReviewPostController::class, "destroy"]);
         
         //Comment
-        Route::delete("admin/deleteComment/{id}", [CommentAdminController::class, "deleteComment"]);
+        Route::delete("admin/deleteCommentAdmin/{id}", [CommentAdminController::class, "deleteComment"]);
 
         // Banner
         Route::post("admin/storeBanner", [BannerAdminController::class, "store"]);
