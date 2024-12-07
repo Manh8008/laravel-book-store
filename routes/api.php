@@ -143,6 +143,9 @@ Route::group([
         Route::post("admin/storeBanner", [BannerAdminController::class, "store"]);
         Route::delete("admin/deleteBanner/{id}", [BannerAdminController::class, "destroy"]);
 
+        // Logout
+        Route::get('admin/logoutAdmin', [LoginAdminController::class, 'logoutAdmin']);
+
     });
 
 

@@ -43,4 +43,17 @@ class LoginAdminController extends Controller
             ], 500);
         }
     }
+
+    public function logoutAdmin(Request $request)
+    {
+        try {
+            $request->user()->currentAccessToken()->delete();
+            return HttpResponse::respondWithSuccess(null, "Đăng xuất thành công.");
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
 }
