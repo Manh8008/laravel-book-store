@@ -21,10 +21,7 @@ class LoginController extends Controller
                     "password" => "required",
                 ]
             );
-            if($validatorUser->fails())
-            {
-                return HttpResponse::respondError($validatorUser->errors());
-            }
+            if($validatorUser->fails()) return HttpResponse::respondError($validatorUser->errors());
             if (Auth::attempt(['email' => $request->email, "password" => $request->password])) 
             {
                 $user = User::where('email', $request->email)->first();
@@ -45,6 +42,4 @@ class LoginController extends Controller
             ],500);
         }
     }
-
-    
 }

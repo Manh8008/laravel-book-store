@@ -7,23 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Library\HttpResponse;
+use Illuminate\Support\Facades\Validator;
 
 
 class ProfileController extends Controller
 {
-    // public function profile()
-    // {
-    //     try {
-    //         $userData = Auth::user();
-    //         if (!$userData) {
-    //             return HttpResponse::respondError('Người dùng chưa đăng nhập');
-    //         }
-    //         $address = $userData->address;
-    //         return HttpResponse::respondWithSuccess($userData, 'Thông tin người dùng được lấy thành công');
-    //     } catch (\Throwable $th) {
-    //         return HttpResponse::respondUnAuthenticated();
-    //     }
-    // }
     public function profile()
     {
         try {
@@ -42,5 +30,36 @@ class ProfileController extends Controller
         }
     }
 
+    public function upload(Request $request)
+    {
+        // dd($request);
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:users,email,' . Auth::id(),
+                'name' => 'required|string|max:255',
+                'phone' => 'nullable|string|max:15',
+            ]);
+            
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            $user = Auth::user();
+            // Update profile
+            $user->email = $request->input('email');
+            $user->name = $request->input('name');
+            $user->phone = $request->input('phone');
+            $user->save();
     
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully!',
+                'user' => $user
+            ]);
+        } catch (\Throwable $th) {
+            return HttpResponse::respondNotFound();
+        }
+    }  
 }

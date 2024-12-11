@@ -34,7 +34,6 @@ use App\Http\Middleware\CheckAdmin;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 Route::post("register", [RegisterController::class, "register"]);
 Route::post("verify-otp", [RegisterController::class, "verifyOtp"]);
 Route::post("resend-otp", [RegisterController::class, "resendOtp"]);
@@ -46,6 +45,7 @@ Route::group([
 ], function(){
     //profile 
     Route::get("profile", [ProfileController::class, "profile"]);
+    Route::put("profile/upload", [ProfileController::class, "upload"]);
     Route::get("logout", [LogoutController::class, "logout"]);
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);

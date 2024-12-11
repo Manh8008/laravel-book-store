@@ -123,7 +123,6 @@ class BookController extends Controller
                 return HttpResponse::respondWithSuccess($books);
             }
         } catch (\Throwable $th) {
-            //throw $th;
             return HttpResponse::respondNotFound();
         }
     }

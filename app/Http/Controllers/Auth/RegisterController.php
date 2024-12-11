@@ -81,6 +81,4 @@ class RegisterController extends Controller
         Mail::to($user->email)->send(new \App\Mail\SendOtpMail($otpCode));
         return HttpResponse::respondWithSuccess(null, "Mã OTP mới đã được gửi. Vui lòng kiểm tra email.");
     }
-
-
 }
