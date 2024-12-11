@@ -35,8 +35,7 @@ class ProfileController extends Controller
         // dd($request);
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email|unique:users,email,' . Auth::id(),
-                'name' => 'required|string|max:255',
+                'name' => 'nullable|string|max:255',
                 'phone' => 'nullable|string|max:15',
             ]);
             
@@ -48,7 +47,6 @@ class ProfileController extends Controller
             }
             $user = Auth::user();
             // Update profile
-            $user->email = $request->input('email');
             $user->name = $request->input('name');
             $user->phone = $request->input('phone');
             $user->save();
