@@ -213,23 +213,35 @@ class CheckOutController extends Controller
         // }
     }
     
-    public function cancelOrder(Request $request, $orderCode)
+    public function cancelOrder(Request $request, $id)
     {
         if (!Auth::check()) {
             return HttpResponse::respondError('Bạn phải đăng nhập để hủy đơn hàng');
         }
-        $order = Orders::where('order_code', $orderCode)
-                        ->where('user_id', Auth::id())
-                        ->first();
+    
+        // Kiểm tra sự tồn tại của đơn hàng
+        $order = Orders::where('id', $id)
+                       ->where('user_id', Auth::id())
+                       ->first();
+    
         if (!$order) {
             return HttpResponse::respondError('Không tìm thấy đơn hàng.');
         }
+    
+        // Kiểm tra trạng thái đơn hàng
         if ($order->order_status == 'Đã xác nhận' || $order->payment_status == 'Đã thanh toán') {
             return HttpResponse::respondError('Đơn hàng đã được xác nhận hoặc đã thanh toán, không thể hủy');
         }
+    
+        // Cập nhật trạng thái đơn hàng
         $order->order_status = 'Đã hủy';
-        $order->save();
-        return HttpResponse::respondWithSuccess('Đơn hàng đã được hủy thành công.');
+    
+        // Kiểm tra việc lưu thay đổi
+        if ($order->save()) {
+            return HttpResponse::respondWithSuccess('Đơn hàng đã được hủy thành công.');
+        } else {
+            return HttpResponse::respondError('Có lỗi xảy ra khi hủy đơn hàng.');
+        }
     }
-
+    
 }

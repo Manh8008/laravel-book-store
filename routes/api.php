@@ -48,6 +48,7 @@ Route::group([
     Route::put("profile/upload", [ProfileController::class, "upload"]);
     Route::get("logout", [LogoutController::class, "logout"]);
     Route::put("changePassword", [ChangePasswordController::class, "changePassword"]);
+    Route::post("cancelOrder/{id}", [CheckOutController::class, "cancelOrder"]);
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
 }); 
