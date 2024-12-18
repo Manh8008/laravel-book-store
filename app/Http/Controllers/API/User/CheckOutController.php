@@ -213,7 +213,7 @@ class CheckOutController extends Controller
                 'message' => 'Đơn hàng không tồn tại hoặc đã được thanh toán.'
             ], 404);
         }
-        $payment = Payments::where('id', $order->Payment_id)
+        $payment = Payments::where('id', $order->payment_id)
                         ->where('payment_status', 'Chưa thanh toán')
                         ->first();
         if (!$payment) {
