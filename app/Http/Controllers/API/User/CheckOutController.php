@@ -22,7 +22,16 @@ class CheckOutController extends Controller
             return HttpResponse::respondError('Bạn phải đăng nhập để đặt hàng.');
         }
         $user = Auth::user();
-        $userAddress = Addresses::where('user_id', $user->id)->first();
+        if ($selectedAddressId) {
+            $userAddress = Addresses::where('id', $selectedAddressId)
+                                    ->where('user_id', $user->id)
+                                    ->first();
+        } else {
+            $userAddress = Addresses::where('user_id', $user->id)
+                                    ->where('default', true) 
+                                    ->first();
+        }
+        // $userAddress = Addresses::where('user_id', $user->id)->first();
         if (!$userAddress) {
             return HttpResponse::respondError('Người dùng chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi đặt hàng.');
         }
@@ -74,9 +83,19 @@ class CheckOutController extends Controller
         if (!Auth::check()) {
             return HttpResponse::respondError('Bạn phải đăng nhập để đặt hàng.');
         }
-
         $user = Auth::user();
-        $userAddress = Addresses::where('user_id', $user->id)->first();
+        $selectedAddressId = $request->input('selected_address_id');
+        if ($selectedAddressId) {
+            $userAddress = Addresses::where('id', $selectedAddressId)
+                                    ->where('user_id', $user->id)
+                                    ->first();
+        } else {
+            $userAddress = Addresses::where('user_id', $user->id)
+                                    ->where('default', true) // Giả sử cột `is_default` xác định địa chỉ mặc định
+                                    ->first();
+        }
+        
+        // $userAddress = Addresses::where('user_id', $user->id)->first();
         if (!$userAddress) {
             return HttpResponse::respondError('Người dùng chưa có địa chỉ. Vui lòng thêm địa chỉ trước khi đặt hàng.');
         }
