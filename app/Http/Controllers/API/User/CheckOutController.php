@@ -22,6 +22,7 @@ class CheckOutController extends Controller
             return HttpResponse::respondError('Bạn phải đăng nhập để đặt hàng.');
         }
         $user = Auth::user();
+        $selectedAddressId = $request->input('selected_address_id');
         if ($selectedAddressId) {
             $userAddress = Addresses::where('id', $selectedAddressId)
                                     ->where('user_id', $user->id)
