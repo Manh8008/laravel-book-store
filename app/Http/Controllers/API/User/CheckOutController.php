@@ -205,7 +205,7 @@ class CheckOutController extends Controller
     public function retryPayment($order_id, Request $request)
     {
         $order = Orders::where('id', $order_id)
-                    ->where('payment_status', 'Pending')
+                    ->where('payment_status', 'Chưa thanh toán')
                     ->first();
         if (!$order) {
             return response()->json([
