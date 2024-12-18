@@ -23,6 +23,7 @@ class CheckOutController extends Controller
         }
         $user = Auth::user();
         $selectedAddressId = $request->input('selected_address_id');
+
         if ($selectedAddressId) {
             $userAddress = Addresses::where('id', $selectedAddressId)
                                     ->where('user_id', $user->id)
@@ -61,7 +62,7 @@ class CheckOutController extends Controller
                 'district' => $userAddress->district,
                 'province' => $userAddress->province,
                 'phone' => $userAddress->phone,
-                'name' => $user->name,
+                'name' => $userAddress->name,
             ]);
             foreach ($request->items as $item) {
                 OrderDetail::create([
