@@ -51,6 +51,7 @@ Route::group([
     Route::post("cancelOrder/{id}", [CheckOutController::class, "cancelOrder"]);
     Route::post("/checkoutCOD", [CheckOutController::class, "checkoutCOD"]);
     Route::post("/checkout-vnpay", [CheckOutController::class, "vnpayPayment"]);
+    Route::post("/checkout-retryVnpay/{id}", [CheckOutController::class, "retryPayment"]);
 }); 
     Route::get("/vnpay-return", [CheckOutController::class, "vnpayReturn"]);
     // Lấy sách
