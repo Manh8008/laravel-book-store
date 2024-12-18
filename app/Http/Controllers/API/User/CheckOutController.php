@@ -127,7 +127,7 @@ class CheckOutController extends Controller
                 'district' => $userAddress->district,
                 'province' => $userAddress->province,
                 'phone' => $userAddress->phone,
-                'name' => $user->name,
+                'name' => $userAddress->name,
             ]);
             // Tạo chi tiết đơn hàng
             foreach ($request->items as $item) {
