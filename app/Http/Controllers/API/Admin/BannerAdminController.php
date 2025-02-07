@@ -29,7 +29,7 @@ class BannerAdminController extends Controller
             if ($request->hasFile('image') && $request->file('image')->isValid()) {
                 $imageName = Str::random(32) . '.' . $request->image->getClientOriginalExtension();
                 Storage::disk('public')->put($imageName, file_get_contents($request->image->getRealPath()));
-                $imageUrl = url(Storage::url($imageName));
+                $imageUrl = config('app.url') . Storage::url($imageName);
             } elseif ($request->filled('image') && filter_var($request->image, FILTER_VALIDATE_URL)) {
                 $response = Http::get($request->image);
                 if ($response->successful() && str_contains($response->header('Content-Type'), 'image')) {
